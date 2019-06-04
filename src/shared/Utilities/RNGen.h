@@ -22,40 +22,58 @@
  * and lore are copyrighted by Blizzard Entertainment, Inc.
  */
 
-#include "Common.h"
+#ifndef MANGOS_RNG_H
+#define MANGOS_RNG_H
 
-char const* localeNames[MAX_LOCALE] =
+#include <random>
+
+#include "ace/Singleton.h"
+#include "ace/Synch_Traits.h"
+#include "Platform/Define.h"
+
+class RNGen
 {
-    "enUS",                                                 // also enGB
-    "koKR",
-    "frFR",
-    "deDE",
-    "zhCN",
-    "zhTW",
-    "esES",
-    "esMX",
+public:
+    RNGen()
+    {
+        std::random_device rd;
+        gen_.seed(rd());
+    }
+
+    int32 rand_i(int32 min, int32 max)
+    {
+        std::uniform_int_distribution<int32> dist{min, max};
+        return dist(gen_);
+    }
+
+    uint32 rand_u(uint32 min, uint32 max)
+    {
+        std::uniform_int_distribution<uint32> dist{min, max};
+        return dist(gen_);
+    }
+
+    uint32 rand()
+    {
+        std::uniform_int_distribution<uint32> dist;
+        return dist(gen_);
+    }
+
+    float rand_f(float min, float max)
+    {
+        std::uniform_real_distribution<float> dist{min, max};
+        return dist(gen_);
+    }
+
+    double rand_d(double min, double max)
+    {
+        std::uniform_real_distribution<double> dist{min, max};
+        return dist(gen_);
+    }
+
+private:
+    std::mt19937 gen_;
 };
 
-// used for search by name or iterate all names
-LocaleNameStr const fullLocaleNameList[] =
-{
-    { "enUS", LOCALE_enUS },
-    { "enGB", LOCALE_enUS },
-    { "koKR", LOCALE_koKR },
-    { "frFR", LOCALE_frFR },
-    { "deDE", LOCALE_deDE },
-    { "zhCN", LOCALE_zhCN },
-    { "zhTW", LOCALE_zhTW },
-    { "esES", LOCALE_esES },
-    { "esMX", LOCALE_esMX },
-    { NULL,   LOCALE_enUS }
-};
+typedef ACE_TSS_Singleton<RNGen, ACE_SYNCH_MUTEX> RNG;
 
-LocaleConstant GetLocaleByName(const std::string& name)
-{
-    for (LocaleNameStr const* itr = &fullLocaleNameList[0]; itr->name; ++itr)
-        if (name == itr->name)
-            { return itr->locale; }
-
-    return LOCALE_enUS;                                     // including enGB case
-}
+#endif

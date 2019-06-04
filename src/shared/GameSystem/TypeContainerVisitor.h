@@ -22,40 +22,33 @@
  * and lore are copyrighted by Blizzard Entertainment, Inc.
  */
 
-#include "Common.h"
 
-char const* localeNames[MAX_LOCALE] =
+#ifndef MANGOS_TYPECONTAINERVISITOR_H
+#define MANGOS_TYPECONTAINERVISITOR_H
+
+/*
+ * @class TypeContainerVisitor is implemented as a visitor pattern.  It is
+ * a visitor to the TypeMapContainer or ContainerMapList.  The visitor has
+ * to overload its types as a visit method is called.
+ */
+
+#include "TypeContainer.h"
+
+template<class VISITOR, class CONTAINER>
+class TypeContainerVisitor
 {
-    "enUS",                                                 // also enGB
-    "koKR",
-    "frFR",
-    "deDE",
-    "zhCN",
-    "zhTW",
-    "esES",
-    "esMX",
+    public:
+        TypeContainerVisitor(VISITOR& v) : i_visitor(v){}
+        void Visit(CONTAINER& c)
+        {
+            c.template accept<VISITOR>(std::forward<VISITOR>(i_visitor));
+        }
+        void Visit(const CONTAINER& c) const
+        {
+            c.template accept<VISITOR>(std::forward<VISITOR>(i_visitor));
+        }
+    private:
+        VISITOR& i_visitor;
 };
 
-// used for search by name or iterate all names
-LocaleNameStr const fullLocaleNameList[] =
-{
-    { "enUS", LOCALE_enUS },
-    { "enGB", LOCALE_enUS },
-    { "koKR", LOCALE_koKR },
-    { "frFR", LOCALE_frFR },
-    { "deDE", LOCALE_deDE },
-    { "zhCN", LOCALE_zhCN },
-    { "zhTW", LOCALE_zhTW },
-    { "esES", LOCALE_esES },
-    { "esMX", LOCALE_esMX },
-    { NULL,   LOCALE_enUS }
-};
-
-LocaleConstant GetLocaleByName(const std::string& name)
-{
-    for (LocaleNameStr const* itr = &fullLocaleNameList[0]; itr->name; ++itr)
-        if (name == itr->name)
-            { return itr->locale; }
-
-    return LOCALE_enUS;                                     // including enGB case
-}
+#endif

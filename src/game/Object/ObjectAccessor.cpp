@@ -87,6 +87,12 @@ ObjectAccessor::KickPlayer(ObjectGuid guid)
 
 
 Corpse*
+ObjectAccessor::FindCorpse(ObjectGuid guid)
+{
+    return m_corpsesMap.Find(guid);
+}
+
+Corpse*
 ObjectAccessor::GetCorpseInMap(ObjectGuid guid, uint32 mapid)
 {
     Corpse* ret = m_corpsesMap.Find(guid);

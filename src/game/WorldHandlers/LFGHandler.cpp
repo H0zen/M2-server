@@ -365,7 +365,7 @@ void WorldSession::SendLfgSearchResults(LfgType type, uint32 entry)
 
     uint32 playerCount = 0;
 
-    sObjectAccessor.DoForAllPlayers([this, &data](Player* plr)->void
+    sObjectAccessor.DoForAllPlayers([this, &playerCount, &data](Player* plr)->void
     {
         ++playerCount;
         if (plr && (plr->GetTeam() == _player->GetTeam()) && plr->IsInWorld())
@@ -562,7 +562,7 @@ void WorldSession::SendLfgRoleCheckUpdate(LFGRoleCheck const& roleCheck)
     {
         ObjectGuid leaderGuid = ObjectGuid(roleCheck.leaderGuidRaw);
         uint8 leaderRoles     = roleCheck.currentRoles.find(leaderGuid)->second;
-        Player* pLeader       = ObjectAccessor::FindPlayer(leaderGuid);
+        Player* pLeader       = sObjectAccessor.FindPlayer(leaderGuid);
         
         data << uint64(leaderGuid.GetRawValue());
         data << uint8(leaderRoles > 0);
@@ -576,7 +576,7 @@ void WorldSession::SendLfgRoleCheckUpdate(LFGRoleCheck const& roleCheck)
             
             ObjectGuid plrGuid = rItr->first;
             
-            Player* pPlayer = ObjectAccessor::FindPlayer(plrGuid);
+            Player* pPlayer = sObjectAccessor.FindPlayer(plrGuid);
             
             data << uint64(plrGuid.GetRawValue());
             data << uint8(rItr->second > 0);

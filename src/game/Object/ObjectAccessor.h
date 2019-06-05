@@ -131,11 +131,12 @@ class ObjectAccessor
         }
 
         // Corpse access
-        Corpse* GetCorpseForPlayerGUID(ObjectGuid guid);
-        Corpse* GetCorpseInMap(ObjectGuid guid, uint32 mapid);
+        Corpse* FindCorpse(ObjectGuid guid);
         void RemoveCorpse(Corpse* corpse);
         void AddCorpse(Corpse* corpse);
         void AddCorpsesToGrid(GridPair const& gridpair, GridType& grid, Map* map);
+        Corpse* GetCorpseForPlayerGUID(ObjectGuid guid);
+        Corpse* GetCorpseInMap(ObjectGuid guid, uint32 mapid);
         Corpse* ConvertCorpseForPlayer(ObjectGuid player_guid, bool insignia = false);
         void RemoveOldCorpses();
 
